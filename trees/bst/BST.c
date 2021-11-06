@@ -145,7 +145,8 @@ struct NODE *remove_Current(struct NODE *curr)
 {
     struct NODE *node1, *node2;
 
-    if(curr->left == NULL) {
+    if (curr->left == NULL)
+    {
         node2 = curr->right;
         free(curr);
         return node2;
@@ -154,14 +155,16 @@ struct NODE *remove_Current(struct NODE *curr)
     node1 = curr;
     node2 = curr->left;
 
-    // procura pelo filho mais à direita 
+    // procura pelo filho mais à direita
     // na subárvore da esquerda
-    while(node2->right != NULL) {
+    while (node2->right != NULL)
+    {
         node1 = node2;
         node2 = node2->right;
     }
 
-    if(node1 != curr) {
+    if (node1 != curr)
+    {
         node1->right = node2->left;
         node2->left = curr->left;
     }
@@ -208,6 +211,28 @@ int remove_BST(BST *root, int value)
         else
             curr = curr->left;
     }
+}
+
+int find_BST(BST *root, int value)
+{
+    if (root == NULL)
+        return 0;
+
+    struct NODE *curr = *root;
+
+    while (curr != NULL)
+    {
+        if (curr->data == value)
+            return 1;
+
+        if (value > curr->data)
+            curr = curr->right;
+        else
+            curr = curr->left;
+    }
+
+    // elemento não encontrado
+    return 0;
 }
 
 void preOrder_BST(BST *root)

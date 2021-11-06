@@ -20,6 +20,8 @@ int insert_BST(BST *root, int value);
 
 int remove_BST(BST *root, int value);
 
+int find_BST(BST *root, int value);
+
 // Libera uma árvore binária tendo como base a raíz da árvore.
 void free_BST(BST *root);
 
