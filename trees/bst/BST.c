@@ -140,6 +140,76 @@ int insert_BST(BST *root, int value)
     return 1;
 }
 
+// auxilia na remoção de um elemento em uma BST
+struct NODE *remove_Current(struct NODE *curr)
+{
+    struct NODE *node1, *node2;
+
+    if(curr->left == NULL) {
+        node2 = curr->right;
+        free(curr);
+        return node2;
+    }
+
+    node1 = curr;
+    node2 = curr->left;
+
+    // procura pelo filho mais à direita 
+    // na subárvore da esquerda
+    while(node2->right != NULL) {
+        node1 = node2;
+        node2 = node2->right;
+    }
+
+    if(node1 != curr) {
+        node1->right = node2->left;
+        node2->left = curr->left;
+    }
+
+    node2->right = curr->right;
+
+    free(curr);
+
+    return node2;
+}
+
+int remove_BST(BST *root, int value)
+{
+    if (root == NULL)
+        return 0;
+
+    struct NODE *curr = *root;
+    struct NODE *prev = NULL;
+
+    // procura pelo elemenot a ser removido
+    while (curr != NULL)
+    {
+        // elemento a ser removido foi encontrado
+        if (value == curr->data)
+        {
+            if (curr == *root)
+                *root = remove_Current(curr);
+            else
+            {
+                if (prev->right == curr)
+                    prev->right = remove_Current(curr);
+                else
+                    prev->left = remove_Current(curr);
+            }
+
+            return 1;
+        }
+
+        // recebe o novo nó atual após a remoção
+        prev = curr;
+
+        if (value > curr->data)
+            curr = curr->right;
+        else
+            curr = curr->left;
+    }
+}
+
 void preOrder_BST(BST *root)
 {
     if (root == NULL)
