@@ -19,7 +19,7 @@ int height_Tree(BinTree *root);
 
 int total_Nodes_Tree(BinTree *root);
 
-void preOrder(BinTree *root);
+void preOrder_Tree(BinTree *root);
 
 void inOrder_Tree(BinTree *root);
 

@@ -77,13 +77,13 @@ int total_Nodes_Tree(BinTree *root)
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = total_Nodes(&((*root)->left));
-    int height_right = total_Nodes(&((*root)->right));
+    int height_left = total_Nodes_Tree(&((*root)->left));
+    int height_right = total_Nodes_Tree(&((*root)->right));
 
     return (height_left + height_right + 1);
 }
 
-void preOrder(BinTree *root)
+void preOrder_Tree(BinTree *root)
 {
     if (root == NULL)
         return;
@@ -91,8 +91,8 @@ void preOrder(BinTree *root)
     if (*root != NULL)
     {
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        preOrder_Tree(&((*root)->left));
+        preOrder_Tree(&((*root)->right));
     }
 }
 
@@ -103,9 +103,9 @@ void inOrder_Tree(BinTree *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
+        inOrder_Tree(&((*root)->left));
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->right));
+        inOrder_Tree(&((*root)->right));
     }
 }
 
@@ -116,8 +116,8 @@ void postOrder_Tree(BinTree *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        postOrder_Tree(&((*root)->left));
+        postOrder_Tree(&((*root)->right));
         printf("%d\n", (*root)->data);
     }
 }
