@@ -151,7 +151,7 @@ int insert_AVL(AVL *root, int value)
     if (root == NULL)
         return 0;
 
-    int isInserted;
+    int is_Inserted;
 
     if (*root == NULL) // árvore vazia ou está em um nó folha
     {
@@ -176,10 +176,10 @@ int insert_AVL(AVL *root, int value)
 
     if (value < curr->data)
     { // insere a esquerda
-        isInserted = insert_AVL(&(curr->left), value);
+        is_Inserted = insert_AVL(&(curr->left), value);
 
         // elemento foi inserido com sucesso
-        if (isInserted == 1)
+        if (is_Inserted == 1)
         {
             // necessário balancear a árvore
             if (balance_Factor_Node(curr) >= 2)
@@ -193,9 +193,9 @@ int insert_AVL(AVL *root, int value)
     }
     else if (value > curr->data) // insere a direita
     {
-        isInserted = insert_AVL(&(curr->right), value);
+        is_Inserted = insert_AVL(&(curr->right), value);
 
-        if (isInserted == 1)
+        if (is_Inserted == 1)
         {
             if (balance_Factor_Node(curr) >= 2)
             {
@@ -214,7 +214,7 @@ int insert_AVL(AVL *root, int value)
 
     curr->height = highest_Value(height_Node(curr->left), height_Node(curr->right)) + 1;
 
-    return isInserted;
+    return is_Inserted;
 }
 
 // auxilia na remoção de um elemento em uma AVL
@@ -253,41 +253,100 @@ struct NODE *remove_Current(struct NODE *curr)
     return node2;
 }
 
+// trata de nó com dois filhos
+struct NODE *find_Lower_Node(struct NODE *curr)
+{
+    struct NODE *node1 = curr;
+    struct NODE *node2 = curr->left;
+
+    while (node2 != NULL)
+    {
+        node1 = node2;
+        node2 = node2->left;
+    }
+
+    return node1;
+}
+
 int remove_AVL(AVL *root, int value)
 {
-    if (root == NULL)
-        return 0;
-
-    struct NODE *curr = *root;
-    struct NODE *prev = NULL;
-
-    // procura pelo elemenot a ser removido
-    while (curr != NULL)
+    if (*root == NULL)
     {
-        // elemento a ser removido foi encontrado
-        if (value == curr->data)
-        {
-            if (curr == *root)
-                *root = remove_Current(curr);
-            else
-            {
-                if (prev->right == curr)
-                    prev->right = remove_Current(curr);
-                else
-                    prev->left = remove_Current(curr);
-            }
+        printf("Non-existent value\n");
+        return 0;
+    }
 
-            return 1;
+    int is_Removed;
+
+    if (value < (*root)->data)
+    {
+        is_Removed = remove_AVL(&(*root)->left, value);
+
+        if (is_Removed == 1)
+        {
+            if (balance_Factor_Node(*root) >= 2)
+            {
+                int height_Node_Right_Left = height_Node((*root)->right->left);
+                int height_Node_Right_Right = height_Node((*root)->right->right);
+
+                if (height_Node_Right_Left <= height_Node_Right_Right)
+                    rotate_RR(root);
+                else
+                    rotate_LR(root);
+            }
+        }
+    }
+    else if (value > (*root)->data)
+    {
+        is_Removed = remove_AVL(&(*root)->right, value);
+
+        if (is_Removed == 1)
+        {
+            if (balance_Factor_Node(*root) >= 2)
+            {
+                int height_Node_Left_Right = height_Node((*root)->left->right);
+                int height_Node_Left_Left = height_Node((*root)->left->left);
+
+                if (height_Node_Left_Right <= height_Node_Left_Left)
+                    rotate_LL(root);
+                else
+                    rotate_LR(root);
+            }
+        }
+    }
+    else if ((*root)->data == value)
+    { // elemento a ser removido foi encontrado
+        if (((*root)->left == NULL || (*root)->right == NULL))
+        { // apenas um 1 filho
+            struct NODE *old_Node = (*root);
+
+            if ((*root)->left != NULL)
+                *root = (*root)->left;
+            else
+                *root = (*root)->right;
+
+            free(old_Node);
+        }
+        else
+        {
+            struct NODE *temp_Node = (find_Lower_Node(*root)->right);
+            (*root)->data = temp_Node->data;
+
+            remove_AVL(&(*root)->right, (*root)->data);
+
+            if (balance_Factor_Node((*root) >= 2))
+            {
+                if (height_Node((*root)->left->right) <= height_Node((*root)->left->left))
+                    rotate_LL(root);
+                else
+                    rotate_LR(root);
+            }
         }
 
-        // recebe o novo nó atual após a remoção
-        prev = curr;
-
-        if (value > curr->data)
-            curr = curr->right;
-        else
-            curr = curr->left;
+        return 1;
     }
+
+    return is_Removed;
 }
 
 int find_AVL(AVL *root, int value)
