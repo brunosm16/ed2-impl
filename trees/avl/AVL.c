@@ -142,7 +142,7 @@ void rotate_LR(AVL *root)
 
 void rotate_RL(AVL *root)
 {
-    rotateLL(&(*root)->right);
+    rotate_LL(&(*root)->right);
     rotate_RR(root);
 }
 
@@ -151,56 +151,70 @@ int insert_AVL(AVL *root, int value)
     if (root == NULL)
         return 0;
 
-    struct NODE *new_Node;
+    int isInserted;
 
-    new_Node = (struct NODE *)malloc(sizeof(struct NODE));
-
-    // erro ao alocar espaço para o novo nó
-    if (new_Node == NULL)
-        return 0;
-
-    new_Node->data = value;
-    new_Node->left = NULL;
-    new_Node->right = NULL;
-
-    // se a árvore for vazia aponta para o novo nó, senão insere
-    // o novo nó respeitando as propriedades de uma AVL
-    if (*root == NULL)
+    if (*root == NULL) // árvore vazia ou está em um nó folha
     {
+        struct NODE *new_Node;
+
+        new_Node = (struct NODE *)malloc(sizeof(struct NODE));
+
+        // erro ao alocar memória para o novo nó
+        if (new_Node == NULL)
+            return 0;
+
+        new_Node->data = value;
+        new_Node->height = 0;
+        new_Node->left = NULL;
+        new_Node->right = NULL;
         *root = new_Node;
+
+        return 1;
+    }
+
+    struct NODE *curr = *root;
+
+    if (value < curr->data)
+    { // insere a esquerda
+        isInserted = insert_AVL(&(curr->left), value);
+
+        // elemento foi inserido com sucesso
+        if (isInserted == 1)
+        {
+            // necessário balancear a árvore
+            if (balance_Factor_Node(curr) >= 2)
+            {
+                if (value < (*root)->left->data)
+                    rotate_LL(root);
+                else
+                    rotate_LR(root);
+            }
+        }
+    }
+    else if (value > curr->data) // insere a direita
+    {
+        isInserted = insert_AVL(&(curr->right), value);
+
+        if (isInserted == 1)
+        {
+            if (balance_Factor_Node(curr) >= 2)
+            {
+                if ((*root)->right->data > value)
+                    rotate_RR(root);
+                else
+                    rotate_RL(root);
+            }
+        }
     }
     else
     {
-        struct NODE *curr = *root;
-        struct NODE *prev = NULL;
-
-        // percorre a árvore procurando o nó folha apropriado
-        // para inserir o novo elemento
-        while (curr != NULL)
-        {
-            // nó folha em que o elemento será inserido
-            prev = curr;
-
-            // elemento já existe
-            if (value == curr->data)
-            {
-                free(new_Node);
-                return 0;
-            }
-
-            if (value > curr->data)
-                curr = curr->right;
-            else
-                curr = curr->left;
-        }
-
-        // realiza a inserção do novo elemento
-        if (value > curr->data)
-            prev->right = prev;
-        else
-            prev->left = prev;
+        printf("This value already exists\n");
+        return 0;
     }
-    return 1;
+
+    curr->height = highest_Value(height_Node(curr->left), height_Node(curr->right)) + 1;
+
+    return isInserted;
 }
 
 // auxilia na remoção de um elemento em uma AVL
