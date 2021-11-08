@@ -49,7 +49,12 @@ int main()
     // inOrder_BST(arv_Bin);
     // preOrder_BST(arv_Bin);
     // postOrder_BST(arv_Bin);
-    check_Is_Empty(arv_Bin);
+    // check_Is_Empty(arv_Bin);
+    int lower = find_Lower_Value(arv_Bin);
+    int highest = find_Highest_Value(arv_Bin);
+
+    printf("Lower value : %d\n", lower);
+    printf("Highest value : %d\n", highest);
 
     free_BST(arv_Bin);
 }

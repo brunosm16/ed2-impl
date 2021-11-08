@@ -10,3 +10,5 @@ int total_Nodes_BST(BST *root);
 int insert_BST(BST *root, int value);
 int remove_BST(BST *root, int value);
 int find_BST(BST *root, int value);
+int find_Lower_Value(BST *root);
+int find_Highest_Value(BST *root);

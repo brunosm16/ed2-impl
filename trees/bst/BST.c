@@ -236,6 +236,40 @@ int find_BST(BST *root, int value)
     return 0;
 }
 
+int find_Lower_Value(BST *root)
+{
+    if (root == NULL)
+        return 0;
+
+    struct NODE *curr = *root;
+    struct NODE *temp = NULL;
+
+    while (curr != NULL)
+    {
+        temp = curr;
+        curr = curr->left;
+    }
+
+    return temp->data;
+}
+
+int find_Highest_Value(BST *root)
+{
+    if (root == NULL)
+        return 0;
+
+    struct NODE *curr = *root;
+    struct NODE *temp = NULL;
+
+    while (curr != NULL)
+    {
+        temp = curr;
+        curr = curr->right;
+    }
+
+    return temp->data;
+}
+
 void preOrder_BST(BST *root)
 {
     if (root == NULL)
