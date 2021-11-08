@@ -9,29 +9,27 @@ struct NODE
     struct NODE *right;
 };
 
-BST *root;
-
 BST *create_BST()
 {
     BST *root = (BST *)malloc(sizeof(BST));
 
-    //  Memory allocated with success
+    // memory allocated with success
     if (root != NULL)
         *root = NULL;
 
     return root;
 }
 
-// Libera uma struct NODE da memória
 void free_Node(struct NODE *node)
 {
     if (node == NULL)
         return;
 
-    // Libera os nós mais à esquerda
-    // e mais à direita recursivamente
+    // free each node on the left and
+    // on the right recursively
     free_Node(node->left);
     free_Node(node->right);
+
     free(node);
     node = NULL;
 }
@@ -41,9 +39,9 @@ void free_BST(BST *root)
     if (root == NULL)
         return;
 
-    // Utiliza a o método auxiliar free_node para liberar
-    // cada nó da árvore
+    // free each node
     free_Node(*root);
+
     free(root);
 }
 
@@ -59,17 +57,12 @@ int height_BST(BST *root)
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = height_Tree(&((*root)->left));
-    int height_right = height_Tree(&((*root)->right));
+    int height_left = height_BST(&((*root)->left));
+    int height_right = height_BST(&((*root)->right));
 
     if (height_left > height_right)
-    {
         return height_left + 1;
-    }
-    else
-    {
-        return height_right + 1;
-    }
+    return height_right + 1;
 }
 
 int total_Nodes_BST(BST *root)
@@ -77,8 +70,8 @@ int total_Nodes_BST(BST *root)
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = total_Nodes(&((*root)->left));
-    int height_right = total_Nodes(&((*root)->right));
+    int height_left = total_Nodes_BST(&((*root)->left));
+    int height_right = total_Nodes_BST(&((*root)->right));
 
     return (height_left + height_right + 1);
 }
@@ -88,17 +81,15 @@ int insert_BST(BST *root, int value)
     if (root == NULL)
         return 0;
 
-    struct NODE *new_Node;
-
-    new_Node = (struct NODE *)malloc(sizeof(struct NODE));
+    struct NODE *new_Node = (struct NODE *)malloc(sizeof(struct NODE));
 
     // erro ao alocar espaço para o novo nó
     if (new_Node == NULL)
         return 0;
 
     new_Node->data = value;
-    new_Node->left = NULL;
     new_Node->right = NULL;
+    new_Node->left = NULL;
 
     // se a árvore for vazia aponta para o novo nó, senão insere
     // o novo nó respeitando as propriedades de uma BST
@@ -132,10 +123,10 @@ int insert_BST(BST *root, int value)
         }
 
         // realiza a inserção do novo elemento
-        if (value > curr->data)
-            prev->right = prev;
+        if (value > prev->data)
+            prev->right = new_Node;
         else
-            prev->left = prev;
+            prev->left = new_Node;
     }
     return 1;
 }
@@ -243,8 +234,8 @@ void preOrder_BST(BST *root)
     if (*root != NULL)
     {
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        preOrder_BST(&((*root)->left));
+        preOrder_BST(&((*root)->right));
     }
 }
 
@@ -255,9 +246,9 @@ void inOrder_BST(BST *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
+        inOrder_BST(&((*root)->left));
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->right));
+        inOrder_BST(&((*root)->right));
     }
 }
 
@@ -268,8 +259,8 @@ void postOrder_BST(BST *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        postOrder_BST(&((*root)->left));
+        postOrder_BST(&((*root)->right));
         printf("%d\n", (*root)->data);
     }
 }

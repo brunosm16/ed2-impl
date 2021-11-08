@@ -14,7 +14,9 @@ int main()
     insert_BST(arv_Bin, 10);
     insert_BST(arv_Bin, 14);
 
-    preOrder_BST(arv_Bin);
+    // inOrder_BST(arv_Bin);
+    // preOrder_BST(arv_Bin);
+    postOrder_BST(arv_Bin);
 
     free_BST(arv_Bin);
 }
