@@ -52,17 +52,27 @@ int isEmpty_BST(BST *root)
     return 0;
 }
 
-int height_BST(BST *root)
+int calculate_Depth(BST *root)
 {
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = height_BST(&((*root)->left));
-    int height_right = height_BST(&((*root)->right));
+    int height_left = calculate_Depth(&((*root)->left));
+    int height_right = calculate_Depth(&((*root)->right));
 
     if (height_left > height_right)
         return height_left + 1;
     return height_right + 1;
+}
+
+int height_BST(BST *root)
+{
+    int depth = calculate_Depth(root);
+
+    if (depth != 0)
+        return depth - 1;
+
+    return depth;
 }
 
 int total_Nodes_BST(BST *root)
