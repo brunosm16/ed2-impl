@@ -45,6 +45,45 @@ void free_BST(BST *root)
     free(root);
 }
 
+void preOrder_BST(BST *root)
+{
+    if (root == NULL)
+        return;
+
+    if (*root != NULL)
+    {
+        printf("%d\n", (*root)->data);
+        preOrder_BST(&((*root)->left));
+        preOrder_BST(&((*root)->right));
+    }
+}
+
+void inOrder_BST(BST *root)
+{
+    if (root == NULL)
+        return;
+
+    if (*root != NULL)
+    {
+        inOrder_BST(&((*root)->left));
+        printf("%d\n", (*root)->data);
+        inOrder_BST(&((*root)->right));
+    }
+}
+
+void postOrder_BST(BST *root)
+{
+    if (root == NULL)
+        return;
+
+    if (*root != NULL)
+    {
+        postOrder_BST(&((*root)->left));
+        postOrder_BST(&((*root)->right));
+        printf("%d\n", (*root)->data);
+    }
+}
+
 int isEmpty_BST(BST *root)
 {
     if (root == NULL || *root == NULL)
@@ -270,41 +309,58 @@ int find_Highest_Value(BST *root)
     return temp->data;
 }
 
-void preOrder_BST(BST *root)
+int sum_Nodes(BST *root)
 {
-    if (root == NULL)
-        return;
+    if (root == NULL || *root == NULL)
+        return 0;
 
-    if (*root != NULL)
+    return (*root)->data + sum_Nodes(&((*root)->left)) + sum_Nodes(&((*root)->right));
+}
+
+int total_Null_Values(BST *root)
+{
+    if (root == NULL || *root == NULL)
+        return 1;
+    return total_Null_Values(&((*root)->left)) + total_Null_Values(&((*root)->right));
+}
+
+int total_Three_Multiple(BST *root)
+{
+    if (root == NULL || *root == NULL)
+        return 0;
+
+    int isMultiple = 0;
+
+    if (root != NULL || *root != NULL)
     {
-        printf("%d\n", (*root)->data);
-        preOrder_BST(&((*root)->left));
-        preOrder_BST(&((*root)->right));
+        if (((*root)->data % 3 == 0))
+        {
+            isMultiple = 1;
+        }
+    }
+
+    if (isMultiple)
+    {
+        return 1 + total_Three_Multiple(&((*root)->left)) + total_Three_Multiple(&((*root)->right));
+    }
+    else
+    {
+        return 0 + total_Three_Multiple(&((*root)->left)) + total_Three_Multiple(&((*root)->right));
     }
 }
 
-void inOrder_BST(BST *root)
+int total_Leaf_Nodes(BST *root)
 {
-    if (root == NULL)
-        return;
+    if (root == NULL || (*root) == NULL)
+        return 0;
 
-    if (*root != NULL)
-    {
-        inOrder_BST(&((*root)->left));
-        printf("%d\n", (*root)->data);
-        inOrder_BST(&((*root)->right));
-    }
-}
+    int isLeaf = 0;
 
-void postOrder_BST(BST *root)
-{
-    if (root == NULL)
-        return;
+    if ((*root)->left == NULL && (*root)->right == NULL)
+        isLeaf = 1;
 
-    if (*root != NULL)
-    {
-        postOrder_BST(&((*root)->left));
-        postOrder_BST(&((*root)->right));
-        printf("%d\n", (*root)->data);
-    }
+    if (isLeaf)
+        return 1 + total_Leaf_Nodes(&((*root)->left)) + total_Leaf_Nodes(&((*root)->right));
+    else
+        return 0 + total_Leaf_Nodes(&((*root)->left)) + total_Leaf_Nodes(&((*root)->right));
 }

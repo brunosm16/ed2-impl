@@ -38,6 +38,7 @@ int main()
     insert_BST(arv_Bin, 10);
     insert_BST(arv_Bin, 14);
     insert_BST(arv_Bin, 16);
+    insert_BST(arv_Bin, 9);
 
     // find_Element(arv_Bin, 12);
 
@@ -52,9 +53,17 @@ int main()
     // check_Is_Empty(arv_Bin);
     int lower = find_Lower_Value(arv_Bin);
     int highest = find_Highest_Value(arv_Bin);
+    int total_nulls = total_Null_Values(arv_Bin);
+    int total_multiple_three = total_Three_Multiple(arv_Bin);
+    int total_nodes = total_Nodes_BST(arv_Bin);
+    int total_leafs = total_Leaf_Nodes(arv_Bin);
 
     printf("Lower value : %d\n", lower);
     printf("Highest value : %d\n", highest);
+    printf("Total nulls : %d\n", total_nulls);
+    printf("Three multiple : %d\n", total_multiple_three);
+    printf("Total nodes : %d\n", total_nodes);
+    printf("Total leaf nodes : %d\n", total_leafs);
 
     free_BST(arv_Bin);
 }

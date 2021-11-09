@@ -12,3 +12,7 @@ int remove_BST(BST *root, int value);
 int find_BST(BST *root, int value);
 int find_Lower_Value(BST *root);
 int find_Highest_Value(BST *root);
+int total_Null_Values(BST *root);
+int sum_Nodes(BST *root);
+int total_Three_Multiple(BST *root);
+int total_Leaf_Nodes(BST *root);
