@@ -10,30 +10,25 @@ struct NODE
     struct NODE *right;
 };
 
-AVL *root;
-
 AVL *create_AVL()
 {
     AVL *root = (AVL *)malloc(sizeof(AVL));
 
-    //  Memory allocated with success
     if (root != NULL)
         *root = NULL;
 
     return root;
 }
 
-// Libera uma struct NODE da memória
 void free_Node(struct NODE *node)
 {
     if (node == NULL)
         return;
 
-    // Libera os nós mais à esquerda
-    // e mais à direita recursivamente
     free_Node(node->left);
     free_Node(node->right);
     free(node);
+
     node = NULL;
 }
 
@@ -42,8 +37,6 @@ void free_AVL(AVL *root)
     if (root == NULL)
         return;
 
-    // Utiliza a o método auxiliar free_node para liberar
-    // cada nó da árvore
     free_Node(*root);
     free(root);
 }
@@ -60,17 +53,13 @@ int height_AVL(AVL *root)
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = height_Tree(&((*root)->left));
-    int height_right = height_Tree(&((*root)->right));
+    int height_left = height_AVL(&((*root)->left));
+    int height_right = height_AVL(&((*root)->right));
 
     if (height_left > height_right)
-    {
         return height_left + 1;
-    }
     else
-    {
         return height_right + 1;
-    }
 }
 
 int total_Nodes_AVL(AVL *root)
@@ -78,8 +67,8 @@ int total_Nodes_AVL(AVL *root)
     if (root == NULL || *root == NULL)
         return 0;
 
-    int height_left = total_Nodes(&((*root)->left));
-    int height_right = total_Nodes(&((*root)->right));
+    int height_left = total_Nodes_AVL(&((*root)->left));
+    int height_right = total_Nodes_AVL(&((*root)->right));
 
     return (height_left + height_right + 1);
 }
@@ -88,8 +77,7 @@ int height_Node(struct NODE *node)
 {
     if (node == NULL)
         return -1;
-    else
-        return node->height;
+    return node->height;
 }
 
 int balance_Factor_Node(struct NODE *node)
@@ -112,9 +100,9 @@ void rotate_LL(AVL *root)
     (*root)->left = node->right;
     node->right = *root;
 
-    (*root)->height = highest_Value(height_AVL((*root)->left), height_AVL((*root)->right)) + 1;
+    (*root)->height = highest_Value(height_Node((*root)->left), height_Node((*root)->right)) + 1;
 
-    node->height = highest_Value(height_AVL(node->left), height_AVL((*root)->height)) + 1;
+    node->height = highest_Value(height_Node(node->left), (*root)->height) + 1;
 
     (*root) = node;
 }
@@ -127,9 +115,9 @@ void rotate_RR(AVL *root)
     (*root)->right = node->left;
     node->left = (*root);
 
-    (*root)->height = highest_Value(height_AVL((*root)->left), height_AVL((*root)->right)) + 1;
+    (*root)->height = highest_Value(height_Node((*root)->left), height_Node((*root)->right)) + 1;
 
-    node->height = highest_Value(height_AVL(node->right), height_AVL((*root)->height)) + 1;
+    node->height = highest_Value(height_Node(node->right), (*root)->height) + 1;
 
     (*root) = node;
 }
@@ -148,9 +136,6 @@ void rotate_RL(AVL *root)
 
 int insert_AVL(AVL *root, int value)
 {
-    if (root == NULL)
-        return 0;
-
     int is_Inserted;
 
     if (*root == NULL) // árvore vazia ou está em um nó folha
@@ -194,12 +179,12 @@ int insert_AVL(AVL *root, int value)
     else if (value > curr->data) // insere a direita
     {
         is_Inserted = insert_AVL(&(curr->right), value);
-
+        
         if (is_Inserted == 1)
         {
             if (balance_Factor_Node(curr) >= 2)
             {
-                if ((*root)->right->data > value)
+                if ((*root)->right->data < value)
                     rotate_RR(root);
                 else
                     rotate_RL(root);
@@ -334,7 +319,7 @@ int remove_AVL(AVL *root, int value)
 
             remove_AVL(&(*root)->right, (*root)->data);
 
-            if (balance_Factor_Node((*root) >= 2))
+            if (balance_Factor_Node(*root) >= 2)
             {
                 if (height_Node((*root)->left->right) <= height_Node((*root)->left->left))
                     rotate_LL(root);
@@ -379,8 +364,8 @@ void preOrder_AVL(AVL *root)
     if (*root != NULL)
     {
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        preOrder_AVL(&((*root)->left));
+        preOrder_AVL(&((*root)->right));
     }
 }
 
@@ -391,9 +376,9 @@ void inOrder_AVL(AVL *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
+        inOrder_AVL(&((*root)->left));
         printf("%d\n", (*root)->data);
-        preOrder(&((*root)->right));
+        inOrder_AVL(&((*root)->right));
     }
 }
 
@@ -404,8 +389,8 @@ void postOrder_AVL(AVL *root)
 
     if (*root != NULL)
     {
-        preOrder(&((*root)->left));
-        preOrder(&((*root)->right));
+        postOrder_AVL(&((*root)->left));
+        postOrder_AVL(&((*root)->right));
         printf("%d\n", (*root)->data);
     }
 }
