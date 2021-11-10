@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "BST.h"
 
+// representa o nó da árvore
 struct NODE
 {
     int data;
@@ -9,24 +10,26 @@ struct NODE
     struct NODE *right;
 };
 
+// criar uma árvore, retornando uma raíz apontando para NULL
 BST *create_BST()
 {
     BST *root = (BST *)malloc(sizeof(BST));
 
-    // memory allocated with success
+    // memória alocada com sucesso
     if (root != NULL)
         *root = NULL;
 
     return root;
 }
 
-void free_Node(struct NODE *node)
+// libera um nó de uma árvore, liberando todos os nós
+// mais à esquerda e mais à direita recursivamentevoid free_Node(struct NODE *node)
 {
     if (node == NULL)
         return;
 
-    // free each node on the left and
-    // on the right recursively
+    // libera os nós mais à esquerda e mais à direita
+    // de forma recursiva
     free_Node(node->left);
     free_Node(node->right);
 
@@ -34,17 +37,18 @@ void free_Node(struct NODE *node)
     node = NULL;
 }
 
+// libera uma árvore binária de busca(BST)
+// usando o método auxiliar free_Node
 void free_BST(BST *root)
 {
     if (root == NULL)
         return;
 
-    // free each node
     free_Node(*root);
-
     free(root);
 }
 
+// percorre a árvore usando pré-ordem
 void preOrder_BST(BST *root)
 {
     if (root == NULL)
@@ -58,6 +62,7 @@ void preOrder_BST(BST *root)
     }
 }
 
+// percorre a árvore usando em-ordem
 void inOrder_BST(BST *root)
 {
     if (root == NULL)
@@ -71,6 +76,7 @@ void inOrder_BST(BST *root)
     }
 }
 
+// percorre a árvore usando pós-ordem
 void postOrder_BST(BST *root)
 {
     if (root == NULL)
@@ -84,6 +90,8 @@ void postOrder_BST(BST *root)
     }
 }
 
+// verifica se uma árvore AVL é nula, caso seja
+// retorna 1 senão retorna 0
 int isEmpty_BST(BST *root)
 {
     if (root == NULL || *root == NULL)
@@ -91,6 +99,7 @@ int isEmpty_BST(BST *root)
     return 0;
 }
 
+// realiza o cálculo da profundidade de uma árvore AVL
 int calculate_Depth(BST *root)
 {
     if (root == NULL || *root == NULL)
@@ -104,6 +113,7 @@ int calculate_Depth(BST *root)
     return height_right + 1;
 }
 
+// cálcula a altura da árvore
 int height_BST(BST *root)
 {
     int depth = calculate_Depth(root);
@@ -180,11 +190,13 @@ int insert_BST(BST *root, int value)
     return 1;
 }
 
-// auxilia na remoção de um elemento em uma BST
+// auxilia na remoção de um elemento em uma BST,
+// tratando o caso de um filho e o de dois filhos
 struct NODE *remove_Current(struct NODE *curr)
 {
     struct NODE *node1, *node2;
 
+    // 1 filho
     if (curr->left == NULL)
     {
         node2 = curr->right;
@@ -202,7 +214,6 @@ struct NODE *remove_Current(struct NODE *curr)
         node1 = node2;
         node2 = node2->right;
     }
-
     if (node1 != curr)
     {
         node1->right = node2->left;

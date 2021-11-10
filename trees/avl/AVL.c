@@ -48,6 +48,7 @@ void free_AVL(AVL *root)
         return;
 
     free_Node(*root);
+
     free(root);
 }
 
@@ -76,7 +77,8 @@ int calculate_Depth(AVL *root)
     return height_right + 1;
 }
 
-int heigth_AVL(AVL *root)
+// cálcula a altura da árvore AVL
+int height_AVL(AVL *root)
 {
     int depth = calculate_Depth(root);
 
