@@ -9,6 +9,10 @@ int main()
     insert_AVL(avl, 1);
     insert_AVL(avl, 2);
     insert_AVL(avl, 3);
+    insert_AVL(avl, 4);
+    insert_AVL(avl, 5);
+    insert_AVL(avl, 6);
+    insert_AVL(avl, 7);
 
     preOrder_AVL(avl);
 

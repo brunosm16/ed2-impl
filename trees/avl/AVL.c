@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "AVL.h"
 
+// representa o nó da árvore
 struct NODE
 {
     int data;
@@ -10,28 +11,37 @@ struct NODE
     struct NODE *right;
 };
 
+// cria uma árvore, retornando uma raíz apontando para NULL
 AVL *create_AVL()
 {
     AVL *root = (AVL *)malloc(sizeof(AVL));
 
+    // memória alocada com sucesso
     if (root != NULL)
         *root = NULL;
 
     return root;
 }
 
+// libera um nó de uma árvore, liberando todos os nós
+// mais à esquerda e mais à direita recursivamente
 void free_Node(struct NODE *node)
 {
     if (node == NULL)
         return;
 
+    // libera os nós mais à esquerda e mais à direita
+    // de forma recursiva
     free_Node(node->left);
     free_Node(node->right);
+
     free(node);
 
     node = NULL;
 }
 
+// libera uma árvore AVL usando o método
+// auxiliar free_Node
 void free_AVL(AVL *root)
 {
     if (root == NULL)
@@ -41,6 +51,8 @@ void free_AVL(AVL *root)
     free(root);
 }
 
+// verifica se uma árvore AVL é nula, caso seja
+// retorna 1 senão retorna 0
 int isEmpty_AVL(AVL *root)
 {
     if (root == NULL || *root == NULL)
@@ -48,31 +60,50 @@ int isEmpty_AVL(AVL *root)
     return 0;
 }
 
-int height_AVL(AVL *root)
+// realiza o cálculo da profundidade de uma árvore AVL
+int calculate_Depth(AVL *root)
 {
     if (root == NULL || *root == NULL)
         return 0;
 
+    // cálcula a altura das subárvores mais à esquerda
+    // e mais à direita de forma recursiva.
     int height_left = height_AVL(&((*root)->left));
     int height_right = height_AVL(&((*root)->right));
 
     if (height_left > height_right)
         return height_left + 1;
-    else
-        return height_right + 1;
+    return height_right + 1;
 }
 
+int heigth_AVL(AVL *root)
+{
+    int depth = calculate_Depth(root);
+
+    // verifica se a árvore tem profundida maior que 0
+    // para não subtrair -1 e retornar um valor negativo
+    if (depth != 0)
+        // considera a raíz como 0 na contagem
+        return depth - 1;
+
+    return depth;
+}
+
+// retorna o número de nós da árvore AVL
 int total_Nodes_AVL(AVL *root)
 {
     if (root == NULL || *root == NULL)
         return 0;
 
+    // soma os nós das árvores mais à esquerda e
+    // das árvores mais à direita
     int height_left = total_Nodes_AVL(&((*root)->left));
     int height_right = total_Nodes_AVL(&((*root)->right));
 
     return (height_left + height_right + 1);
 }
 
+// retorna a áltura da estrutura NODE(nó)
 int height_Node(struct NODE *node)
 {
     if (node == NULL)
@@ -80,11 +111,14 @@ int height_Node(struct NODE *node)
     return node->height;
 }
 
+// retorna o fator de balanceamento
 int balance_Factor_Node(struct NODE *node)
 {
     return labs(height_Node(node->left) - height_Node(node->right));
 }
 
+// retorna o maior valor entre dois inteiros(x e y),
+// método auxiliar utilizado nas rotações
 int highest_Value(int x, int y)
 {
     if (x > y)
@@ -92,42 +126,49 @@ int highest_Value(int x, int y)
     return y;
 }
 
+// realiza a rotação LL
 void rotate_LL(AVL *root)
 {
     struct NODE *node;
 
+    // realiza a rotação
     node = (*root)->left;
     (*root)->left = node->right;
     node->right = *root;
 
+    // atualiza as alturas da subárvores e da raiz
     (*root)->height = highest_Value(height_Node((*root)->left), height_Node((*root)->right)) + 1;
-
     node->height = highest_Value(height_Node(node->left), (*root)->height) + 1;
 
+    // atualiza a raíz
     (*root) = node;
 }
-
+// realiza a rotação RR
 void rotate_RR(AVL *root)
 {
     struct NODE *node;
 
+    // realiza a rotação
     node = (*root)->right;
     (*root)->right = node->left;
     node->left = (*root);
 
+    // atualiza as alturas da subárvores e da raiz
     (*root)->height = highest_Value(height_Node((*root)->left), height_Node((*root)->right)) + 1;
-
     node->height = highest_Value(height_Node(node->right), (*root)->height) + 1;
 
+    // atualiza a raíz
     (*root) = node;
 }
 
+// realiza a rotação LR
 void rotate_LR(AVL *root)
 {
     rotate_RR(&(*root)->left);
     rotate_LL(root);
 }
 
+// realiza a rotação RL
 void rotate_RL(AVL *root)
 {
     rotate_LL(&(*root)->right);
@@ -136,10 +177,13 @@ void rotate_RL(AVL *root)
 
 int insert_AVL(AVL *root, int value)
 {
+    // variável usada para verifica se um elemento
+    // foi inserido com sucesso
     int is_Inserted;
 
-    if (*root == NULL) // árvore vazia ou está em um nó folha
+    if (*root == NULL) // árvore vazia ou nó folha
     {
+        // nó a ser inserido
         struct NODE *new_Node;
 
         new_Node = (struct NODE *)malloc(sizeof(struct NODE));
@@ -148,6 +192,7 @@ int insert_AVL(AVL *root, int value)
         if (new_Node == NULL)
             return 0;
 
+        // atribui os valores do novo nó
         new_Node->data = value;
         new_Node->height = 0;
         new_Node->left = NULL;
@@ -160,10 +205,12 @@ int insert_AVL(AVL *root, int value)
     struct NODE *curr = *root;
 
     if (value < curr->data)
-    { // insere a esquerda
+    { // insere à esquerda
+
+        // verifica se a inserção foi realiza com sucesso
         is_Inserted = insert_AVL(&(curr->left), value);
 
-        // elemento foi inserido com sucesso
+        // inserção obteve sucesso
         if (is_Inserted == 1)
         {
             // necessário balancear a árvore
@@ -178,10 +225,13 @@ int insert_AVL(AVL *root, int value)
     }
     else if (value > curr->data) // insere a direita
     {
+        // verifica se a inserção foi realiza com sucesso
         is_Inserted = insert_AVL(&(curr->right), value);
-        
+
+        // inserção obteve sucesso
         if (is_Inserted == 1)
         {
+            // necessário balancear a árvore
             if (balance_Factor_Node(curr) >= 2)
             {
                 if ((*root)->right->data < value)
@@ -192,53 +242,18 @@ int insert_AVL(AVL *root, int value)
         }
     }
     else
-    {
-        printf("This value already exists\n");
+    { // tentativa de inserir um valor duplicado
+        printf("Duplicated value\n");
         return 0;
     }
 
+    // atualiza a altura da árvore
     curr->height = highest_Value(height_Node(curr->left), height_Node(curr->right)) + 1;
 
     return is_Inserted;
 }
 
-// auxilia na remoção de um elemento em uma AVL
-struct NODE *remove_Current(struct NODE *curr)
-{
-    struct NODE *node1, *node2;
-
-    if (curr->left == NULL)
-    {
-        node2 = curr->right;
-        free(curr);
-        return node2;
-    }
-
-    node1 = curr;
-    node2 = curr->left;
-
-    // procura pelo filho mais à direita
-    // na subárvore da esquerda
-    while (node2->right != NULL)
-    {
-        node1 = node2;
-        node2 = node2->right;
-    }
-
-    if (node1 != curr)
-    {
-        node1->right = node2->left;
-        node2->left = curr->left;
-    }
-
-    node2->right = curr->right;
-
-    free(curr);
-
-    return node2;
-}
-
-// trata de nó com dois filhos
+// procura pelo menor elemento da árvore
 struct NODE *find_Lower_Node(struct NODE *curr)
 {
     struct NODE *node1 = curr;
@@ -253,24 +268,31 @@ struct NODE *find_Lower_Node(struct NODE *curr)
     return node1;
 }
 
+// remove o nó que contém o valor(value) passado como argumento
 int remove_AVL(AVL *root, int value)
 {
+    // valor não existente na árvore
     if (*root == NULL)
     {
         printf("Non-existent value\n");
         return 0;
     }
 
+    // variável usada para verificar se a remoção foi realizada com sucesso
     int is_Removed;
 
-    if (value < (*root)->data)
+    if (value < (*root)->data) // valor se encontra mais à esquerda
     {
         is_Removed = remove_AVL(&(*root)->left, value);
 
+        // elemento foi removido com sucesso
         if (is_Removed == 1)
         {
+            // necessário fazer o balanceamento da árvore
             if (balance_Factor_Node(*root) >= 2)
             {
+                // obtem a altura dos nós para verificar
+                // qual o tipo de rotação necessaŕia
                 int height_Node_Right_Left = height_Node((*root)->right->left);
                 int height_Node_Right_Right = height_Node((*root)->right->right);
 
@@ -281,14 +303,18 @@ int remove_AVL(AVL *root, int value)
             }
         }
     }
-    else if (value > (*root)->data)
+    else if (value > (*root)->data) // valor se encontra mais à direita
     {
         is_Removed = remove_AVL(&(*root)->right, value);
 
+        // elemento foi removido com sucesso
         if (is_Removed == 1)
         {
+            // necessário fazer o balanceamento da árvore
             if (balance_Factor_Node(*root) >= 2)
             {
+                // obtem a altura dos nós para verificar
+                // qual o tipo de rotação necessaŕia
                 int height_Node_Left_Right = height_Node((*root)->left->right);
                 int height_Node_Left_Left = height_Node((*root)->left->left);
 
@@ -299,12 +325,14 @@ int remove_AVL(AVL *root, int value)
             }
         }
     }
-    else if ((*root)->data == value)
-    { // elemento a ser removido foi encontrado
+    else if ((*root)->data == value) // elemento a ser removido foi encontrado
+    {
         if (((*root)->left == NULL || (*root)->right == NULL))
         { // apenas um 1 filho
             struct NODE *old_Node = (*root);
 
+            // verifica em qual lado da árvore o elemento
+            // vai ser removido
             if ((*root)->left != NULL)
                 *root = (*root)->left;
             else
@@ -313,12 +341,19 @@ int remove_AVL(AVL *root, int value)
             free(old_Node);
         }
         else
-        {
+        { // 2 filhos 
+            // procura o menor nó da subárvore à direita
             struct NODE *temp_Node = (find_Lower_Node(*root)->right);
+
+            // atualiza o valor da raíz com o valor 
+            // do menor nó da subárvore à direita
             (*root)->data = temp_Node->data;
 
+            // remove o valor do menor nó da subárvore 
+            // à direita, pois agora ele se encontra na raíz
             remove_AVL(&(*root)->right, (*root)->data);
 
+            // necessário balancear a árvore
             if (balance_Factor_Node(*root) >= 2)
             {
                 if (height_Node((*root)->left->right) <= height_Node((*root)->left->left))
@@ -334,6 +369,7 @@ int remove_AVL(AVL *root, int value)
     return is_Removed;
 }
 
+// procura um determinado valor(value) passa como argumento
 int find_AVL(AVL *root, int value)
 {
     if (root == NULL)
@@ -342,10 +378,13 @@ int find_AVL(AVL *root, int value)
     struct NODE *curr = *root;
 
     while (curr != NULL)
-    {
+    {   
+        // valor encontrado
         if (curr->data == value)
             return 1;
 
+        // verifica em qual lado da árvore o valor
+        // está localizado  
         if (value > curr->data)
             curr = curr->right;
         else
@@ -356,6 +395,7 @@ int find_AVL(AVL *root, int value)
     return 0;
 }
 
+// percorre a árvore usando pre-ordem
 void preOrder_AVL(AVL *root)
 {
     if (root == NULL)
@@ -369,6 +409,7 @@ void preOrder_AVL(AVL *root)
     }
 }
 
+// percorre a árvore usando em-ordem
 void inOrder_AVL(AVL *root)
 {
     if (root == NULL)
@@ -382,6 +423,7 @@ void inOrder_AVL(AVL *root)
     }
 }
 
+// percorre a árvore usando pós-ordem
 void postOrder_AVL(AVL *root)
 {
     if (root == NULL)
